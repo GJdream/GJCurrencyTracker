@@ -35,21 +35,22 @@
 
             <Button Text="Refresh Rates" Command="{Binding RefreshCommand}" Margin="0,20,0,0" />
 
-            <Label Text="Exchange Rates:" FontSize="Medium" FontAttributes="Bold" Margin="0,20,0,0" />
+            <StackLayout Orientation="Horizontal">
+                <Label Text="Exchange Rates: From" FontSize="Medium" FontAttributes="Bold" Margin="0,20,0,0" />
+                <Label Text="{Binding SelectedBaseCurrency}" FontSize="Medium" FontAttributes="Bold" Margin="0,20,0,0" />
+            </StackLayout>
 
             <!-- Display Rates -->
             <CollectionView ItemsSource="{Binding Rates}">
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <!--<Frame CornerRadius="8" Margin="5" Padding="10" BackgroundColor="#EFEFEF">
-                            <HorizontalStackLayout>
-                                <Label Text="{Binding Currency}" FontAttributes="Bold" WidthRequest="100" TextColor="Black" />
-                                <Label Text="{Binding Rate, StringFormat='Rate: {0:F2}'}" TextColor="Black" />
-                            </HorizontalStackLayout>
-                        </Frame>-->
+                     
                         <StackLayout Orientation="Horizontal" Padding="10">
+                            <Label Text="{Binding baseCurrency}" WidthRequest="80" />
                             <Label Text="{Binding Currency}" WidthRequest="100" />
                             <Label Text="{Binding Rate, StringFormat='Rate: {0:F2}'}" />
+                           
+
                         </StackLayout>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>

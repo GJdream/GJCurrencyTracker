@@ -34,14 +34,18 @@ namespace GjCurrencyTracker.ViewModels
                 if (_selectedBaseCurrency != value)
                 {
                     _selectedBaseCurrency = value;
+                    Preferences.Set("SelectedBaseCurrency", value);
                     OnPropertyChanged();
                     FetchExchangeRates();
                 }
             }
         }
 
+        public ICommand NavigateToAlertPageCommand { get; }
+
         public MainViewModel()
         {
+            NavigateToAlertPageCommand = new Command<ExchangeRate>(NavigateToAlertPage);
             _exchangeRateService = new ExchangeRateService();
             _alertService = new AlertService();
             RefreshCommand = new Command(ExecuteRefresh);
@@ -60,6 +64,15 @@ namespace GjCurrencyTracker.ViewModels
             LoadAlertRulesAsync(); // Load alert rules from local database
             StartTimer();
             FetchExchangeRates();
+        }
+
+        private async void NavigateToAlertPage(ExchangeRate selectedRate)
+        {
+            if (selectedRate != null)
+            {
+                // Navigate to AlertPage and pass the selected base and target currency
+                await Shell.Current.GoToAsync($"{nameof(AlertPage)}?BaseCurrency={selectedRate.baseCurrency}&TargetCurrency={selectedRate.Currency}");
+            }
         }
 
         private void OnCurrencyToggle(string currency)
@@ -130,6 +143,7 @@ namespace GjCurrencyTracker.ViewModels
             {
                 if (_selectedTargetCurrencies.Contains(rate.Currency))
                 {
+                    rate.baseCurrency = SelectedBaseCurrency;
                     Rates.Add(rate);  // Add to the ObservableCollection if it's selected
 
                     //Rates.Add(rate);
@@ -158,43 +172,43 @@ namespace GjCurrencyTracker.ViewModels
             FetchExchangeRates();
         }
 
+
+/* Unmerged change from project 'GjCurrencyTracker (net8.0-android)'
+Before:
         private void CheckAlerts()
         {
+After:
+        private async Task CheckAlertsAsync()
+        {
+*/
+        private async void CheckAlerts()
+        {
+            LoadAlertRulesAsync();
+
             if (_alertRules == null || !_alertRules.Any()) return;
 
             foreach (var alert in _alertRules)
             {
-                var matchingRate = Rates.FirstOrDefault(r => r.Currency == alert.TargetCurrency);
-                if (matchingRate != null)
+                var rate = await _exchangeRateService.GetExchangeRateAsync(alert.BaseCurrency, alert.TargetCurrency);
+
+                bool conditionMet = false;
+
+                // Check conditions
+                if (alert.Condition == "GreaterThan" && rate > alert.TargetValue)
                 {
-                    double currentRate = matchingRate.Rate;
-                    double previousRate = _previousRates.ContainsKey(alert.TargetCurrency) ? _previousRates[alert.TargetCurrency] : 0;
+                    conditionMet = true;
+                }
+                else if (alert.Condition == "LessThan" && rate < alert.TargetValue)
+                {
+                    conditionMet = true;
+                }
 
-                    bool alertTriggered = false;
-
-                    if (alert.Condition == ">" && currentRate > alert.TargetValue)
-                    {
-                        alertTriggered = true;
-                    }
-                    else if (alert.Condition == "<" && currentRate < alert.TargetValue)
-                    {
-                        alertTriggered = true;
-                    }
-                    else if (alert.Condition == "Drop" && previousRate != 0)
-                    {
-                        double percentChange = ((previousRate - currentRate) / previousRate) * 100;
-                        if (percentChange >= alert.TargetValue)
-                        {
-                            alertTriggered = true;
-                        }
-                    }
-
-                    if (alertTriggered && !alert.IsTriggered)
-                    {
-                        alert.IsTriggered = true;
-                        _alertService.NotifyAlert(alert); // Show notification (or any UI feedback)
-                        App.Database.SaveAlertRuleAsync(alert); // Update alert as triggered
-                    }
+                if (conditionMet && !alert.IsTriggered)
+                {
+                    // Trigger the alert
+                    alert.IsTriggered = true;
+                    await App.Database.SaveAlertRuleAsync(alert);
+                    _alertService.NotifyAlert(alert); 
                 }
             }
         }

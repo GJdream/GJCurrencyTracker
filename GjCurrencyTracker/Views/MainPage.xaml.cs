@@ -8,6 +8,7 @@ namespace GjCurrencyTracker.Views
         public MainPage()
         {
             InitializeComponent();
+            BindingContext = new MainViewModel();
         }
 
         private void OnCurrencyCheckedChanged(object sender, CheckedChangedEventArgs e)

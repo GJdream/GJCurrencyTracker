@@ -1,0 +1,69 @@
+﻿<!--<ContentPage 
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+    xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
+    x:Class="GjCurrencyTracker.Views.HistoryPage"
+    Title="Exchange Rate History">
+
+    <ContentPage.Content>
+        <Grid Padding="20">
+
+            <VerticalStackLayout Spacing="20">
+                <Label Text="Exchange Rate Trend" 
+                       FontSize="28" 
+                       FontAttributes="Bold" 
+                       HorizontalOptions="Center" 
+                       TextColor="#1E88E5" />
+
+                <microcharts:ChartView 
+                    x:Name="chartView"
+                    HeightRequest="350"
+                    HorizontalOptions="Fill"
+                    VerticalOptions="Fill"
+                    Margin="0,10,0,0" />
+            </VerticalStackLayout>
+
+        </Grid>
+    </ContentPage.Content>
+</ContentPage>-->
+
+
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:microcharts="clr-namespace:Microcharts.Maui;assembly=Microcharts.Maui"
+             x:Class="GjCurrencyTracker.Views.HistoryPage"
+             Title="Exchange Rate History"
+             BackgroundColor="White">
+
+    <VerticalStackLayout Padding="20" Spacing="20">
+
+        <Label Text="Exchange Rate History" 
+               FontSize="24" 
+               HorizontalOptions="Center" 
+               FontAttributes="Bold" 
+               TextColor="DarkBlue" />
+
+        <HorizontalStackLayout Spacing="10">
+            <Picker Title="Base Currency" ItemsSource="{Binding AvailableCurrencies}" 
+                    SelectedItem="{Binding BaseCurrency}" />
+            <Picker Title="Target Currency" ItemsSource="{Binding AvailableCurrencies}" 
+                    SelectedItem="{Binding TargetCurrency}" />
+        </HorizontalStackLayout>
+
+        <microcharts:ChartView 
+            x:Name="ChartViewControl"
+            HeightRequest="300"
+           HorizontalOptions="Fill"
+            VerticalOptions="Fill"
+            Margin="0,10,0,0" />
+
+        <Button Text="Refresh History"
+                Command="{Binding LoadHistoryCommand}"
+                BackgroundColor="DodgerBlue"
+                TextColor="White"
+                CornerRadius="10"
+                Padding="10,5"
+                FontAttributes="Bold" />
+    </VerticalStackLayout>
+
+</ContentPage>

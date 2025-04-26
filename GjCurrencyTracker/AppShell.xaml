@@ -13,4 +13,8 @@
         <ShellContent Title="Alert Page" ContentTemplate="{DataTemplate views:AlertPage}" />
     </FlyoutItem>
 
+    <FlyoutItem Title="History" Icon="history.png">
+        <ShellContent Title="History Page" ContentTemplate="{DataTemplate views:HistoryPage}" />
+    </FlyoutItem>
+
 </Shell>
