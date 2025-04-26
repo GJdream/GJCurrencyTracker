@@ -1,0 +1,61 @@
+﻿<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:GjCurrencyTracker.ViewModels"
+             x:Class="GjCurrencyTracker.Views.MainPage">
+
+    <ContentPage.BindingContext>
+        <viewmodels:MainViewModel />
+    </ContentPage.BindingContext>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="20" Spacing="15">
+
+            <Label Text="Select Base Currency:" FontSize="Medium" FontAttributes="Bold" />
+
+            <!-- Base Currency Picker -->
+            <Picker ItemsSource="{Binding AvailableCurrencies}"
+                    SelectedItem="{Binding SelectedBaseCurrency}"
+                    Title="Choose base currency" />
+
+            <Label Text="Select Target Currencies:" FontSize="Medium" FontAttributes="Bold" Margin="0,20,0,0" />
+
+            <!-- Multi-select Target Currencies -->
+            <CollectionView ItemsSource="{Binding AvailableCurrencies}" SelectionMode="Multiple"
+                            SelectedItems="{Binding SelectedTargetCurrencies}"
+                            HeightRequest="200">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <StackLayout Orientation="Horizontal" Padding="10">
+                            <CheckBox IsChecked="{Binding IsSelected}" CheckedChanged="OnCurrencyCheckedChanged" />
+                            <Label Text="{Binding .}" VerticalOptions="Center" Margin="10,0,0,0" />
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+            <Button Text="Refresh Rates" Command="{Binding RefreshCommand}" Margin="0,20,0,0" />
+
+            <Label Text="Exchange Rates:" FontSize="Medium" FontAttributes="Bold" Margin="0,20,0,0" />
+
+            <!-- Display Rates -->
+            <CollectionView ItemsSource="{Binding Rates}">
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <!--<Frame CornerRadius="8" Margin="5" Padding="10" BackgroundColor="#EFEFEF">
+                            <HorizontalStackLayout>
+                                <Label Text="{Binding Currency}" FontAttributes="Bold" WidthRequest="100" TextColor="Black" />
+                                <Label Text="{Binding Rate, StringFormat='Rate: {0:F2}'}" TextColor="Black" />
+                            </HorizontalStackLayout>
+                        </Frame>-->
+                        <StackLayout Orientation="Horizontal" Padding="10">
+                            <Label Text="{Binding Currency}" WidthRequest="100" />
+                            <Label Text="{Binding Rate, StringFormat='Rate: {0:F2}'}" />
+                        </StackLayout>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>
